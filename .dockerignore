@@ -1,13 +1,6 @@
 vendor/
 var/
-
-.git/
-.idea/
-.env.local
-.dockerignore
-.editorconfig
-.gitignore
-docker-compose.yml
+node_modules/
 
 *.log
 *.tmp
