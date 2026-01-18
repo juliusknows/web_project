@@ -11,9 +11,17 @@ services:
             timeout: 5s
             retries: 3
         expose:
-            -   "9000"
+            - "9000"
+        command: php-fpm -F
         networks:
             - app-network
+
+
+
+
+
+
+
 
     nginx:
         image: nginx:alpine
