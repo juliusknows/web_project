@@ -11,13 +11,6 @@ services:
             - "9000"
         ports:
             - "9003"
-        environment:
-            - APP_ENV
-            - DEBUG
-            - DATABASE_URL
-            - CACHE_DRIVER
-            - LOG_LEVEL
-            - XDEBUG_ENABLED
         networks:
             - dev-network
 

@@ -1,84 +1,95 @@
+#------- BASE -------
 FROM php:8.4-fpm-alpine AS base
 
-WORKDIR /var/www
-
-RUN apk add --no-cache \
+RUN apk update && apk add --no-cache \
     php-mbstring \
     php-xml \
     php-curl \
     php-zip \
     php-opcache \
-    php-json
+    php-json \
+    php-pdo \
+    php-pdo_mysql \
+    musl-locales \
+    musl-locales-lang \
+    tzdata \
+    nano
 
-RUN docker-php-ext-install -j$(nproc) \
-    pdo \
-    pdo_mysql
+ENV LANG=ru_RU.UTF-8
+ENV LC_ALL=ru_RU.UTF-8
+ENV LANGUAGE=ru_RU.UTF-8
 
-RUN mkdir -p /var/www/var/cache /var/www/var/log && \
-    chown -R www-data:www-data /var/www/var && \
-    chmod -R 775 /var/www/var
+ENV TZ="UTC"
 
-COPY --from=juliusknows/web-project:1.0 /usr/local/bin/composer /usr/local/bin/composer
-COPY composer.json composer.lock ./
+COPY --from=composer:2.9 /usr/bin/composer /usr/bin/composer
 
-RUN /usr/local/bin/composer install --optimize-autoloader --no-interaction --no-scripts --prefer-dist
+WORKDIR /var/www
 
-COPY bin/ bin/
-COPY config/ config/
-COPY docker/ docker/
-COPY public/ public/
-COPY src/ src/
-COPY .env .env
+ENV PATH="$PATH:/var/www/vendor/bin:/var/www/bin"
 
-RUN apk cache clean && \
-    rm -rf \
-        /var/lib/apk/cache/* \
-        /var/cache/apk/* \
-        /root/.composer/cache/* \
-        /tmp/pear/ /tmp/pecl/ /var/tmp/pecl-build/
+ENTRYPOINT ["/bin/bash", "/var/www/bin/entrypoint.sh"]
+CMD ["php-fpm"]
 
-RUN chown -R www-data:www-data /var/www
+COPY ./docker/php/symfony.ini $PHP_INI_DIR/conf.d/symfony.ini
+COPY ./docker/php/symfony-fpm-pool.conf $PHP_INI_DIR/../php-fpm.d/www.conf
 
+COPY ./composer.json /var/www/composer.json
+COPY ./composer.lock /var/www/composer.lock
+COPY ./symfony.lock /var/www/symfony.lock
+COPY ./bin/ /var/www/bin/
+COPY ./public/ /var/www/public/
+COPY ./config/ /var/www/config/
+COPY ./migrations /var/www/migrations
+COPY ./.env /var/www/.env
+COPY ./src/ /var/www/src/
+
+
+RUN composer install --prefer-dist --no-scripts --no-dev --optimize-autoloader --classmap-authoritative && \
+    chmod +x /var/www/bin/entrypoint.sh && \
+    rm -rf /var/www/html
+
+#------- END BASE -------
+
+#------- DEV -------
 FROM base AS dev
 
-WORKDIR /var/www
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"
+ENV APP_ENV=dev
 
-# Инструменты для разработки
-RUN apk add --no-cache \
-    git \
-    bash
+RUN pecl install xdebug-3.2.2 && docker-php-ext-enable xdebug
 
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"  && \
+    echo 'user = root' >> $PHP_INI_DIR/../php-fpm.d/www.conf  && \
+    echo 'group = root' >> $PHP_INI_DIR/../php-fpm.d/www.conf && \
+    composer install --prefer-dist --no-scripts --optimize-autoloader
 
-ARG MODE=dev
+#COPY ./.php-cs-fixer.dist.php /var/www/.php-cs-fixer.dist.php
+#COPY ./phpstan.neon.dist /var/www/phpstan.neon.dist
+#COPY ./phpunit.xml /var/www/phpunit.xml
+#COPY ./psalm.xml /var/www/psalm.xml
+COPY ./tests /var/www/tests
+COPY ./docker/php/xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 
-ENV STAND=$MODE
+#------ END DEV--------
 
-#EXPOSE 9003
-EXPOSE 9000
-USER www-data
-CMD ["php-fpm"]
-
-
+#------- PROD -------
 FROM base AS prod
 
-WORKDIR /var/www
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
+ENV PHP_OPCACHE_PRELOAD="/var/www/config/preload.php"
+ENV APP_ENV=prod
 
-# Удаление composer и тестовых файлов
-RUN rm -rf \
-    /usr/local/bin/composer \
-    /var/www/composer.json \
-    /var/www/composer.lock \
-    /var/www/tests \
-    /var/www/docker
+RUN mkdir -p /var/run/supervisor && \
+    chown www-data:www-data /var/run/supervisor
 
-# Строгие права
-RUN chown -R www-data:www-data /var/www \
-    && find /var/www -type d -exec chmod 750 {} \; \
-    && find /var/www -type f -exec chmod 640 {} \;
+RUN mkdir -p /var/www/var/cache/prod && \
+    chown -R www-data:www-data /var/www && \
+    echo "www-data   ALL=NOPASSWD: /usr/sbin/cron" >> /etc/sudoers  && \
+    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && \
+    apk -v cache clean && \
+    echo 'user = www-data' >> $PHP_INI_DIR/../php-fpm.d/www.conf && \
+    echo 'group = www-data' >> $PHP_INI_DIR/../php-fpm.d/www.conf
 
-USER www-data
-EXPOSE 9000
-CMD ["php-fpm"]
+USER www-data:www-data
 
-
-
+#------ END PROD--------
