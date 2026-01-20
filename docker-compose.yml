@@ -3,7 +3,7 @@ services:
         build:
             context: .
             dockerfile: docker/Dockerfile
-            target: final
+            target: dev
         container_name: php-app
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:9000/ping" ]
@@ -12,9 +12,12 @@ services:
             retries: 3
         expose:
             - "9000"
-        command: php-fpm -F
         networks:
             - app-network
+
+
+
+
 
 
 

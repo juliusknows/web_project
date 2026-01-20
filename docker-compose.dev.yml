@@ -6,14 +6,11 @@ services:
             target: dev
         env_file:
             - .env.dev
-        container_name: app
-        healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:9000/ping" ]
-            interval: 10s
-            timeout: 5s
-            retries: 3
+        container_name: php-app
         expose:
             - "9000"
+        ports:
+            - "9003"
         environment:
             - APP_ENV
             - DEBUG
@@ -37,5 +34,5 @@ services:
             - app
 
 networks:
-    app-network:
+    dev-network:
         driver: bridge

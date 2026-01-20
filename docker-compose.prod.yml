@@ -6,7 +6,7 @@ services:
             target: prod
         env_file:
             - .env.prod
-        container_name: app
+        container_name: php-app
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:9000/ping" ]
             interval: 10s
@@ -20,9 +20,11 @@ services:
             - DATABASE_URL
             - CACHE_DRIVER
             - LOG_LEVEL
-
         networks:
             - prod-network
+
+
+
 
     nginx:
         image: nginx:alpine
@@ -37,5 +39,5 @@ services:
             - app
 
 networks:
-    app-network:
+    prod-network:
         driver: bridge
