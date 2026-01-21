@@ -13,7 +13,8 @@ RUN apk update && apk add --no-cache \
     musl-locales \
     musl-locales-lang \
     tzdata \
-    nano
+    nano \
+    bash
 
 ENV LANG=ru_RU.UTF-8
 ENV LC_ALL=ru_RU.UTF-8
@@ -53,10 +54,18 @@ RUN composer install --prefer-dist --no-scripts --no-dev --optimize-autoloader -
 #------- DEV -------
 FROM base AS dev
 
+RUN apk update && apk add --no-cache \
+    autoconf \
+    g++ \
+    make \
+    pkgconf \
+    php84-dev \
+    linux-headers
+
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"
 ENV APP_ENV=dev
 
-RUN pecl install xdebug-3.2.2 && docker-php-ext-enable xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"  && \
     echo 'user = root' >> $PHP_INI_DIR/../php-fpm.d/www.conf  && \
