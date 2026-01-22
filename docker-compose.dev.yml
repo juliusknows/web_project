@@ -4,7 +4,7 @@ services:
             context: .
             dockerfile: docker/Dockerfile
             target: dev
-        container_name: php-app
+        container_name: app-symfony
         volumes: &volumes
             - public-volume:/var/www/public
 #            - ./var/log:/var/www/var/log
