@@ -72,10 +72,10 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"  && \
     echo 'group = root' >> $PHP_INI_DIR/../php-fpm.d/www.conf && \
     composer install --prefer-dist --no-scripts --optimize-autoloader
 
-#COPY ./.php-cs-fixer.dist.php /var/www/.php-cs-fixer.dist.php
-#COPY ./phpstan.neon.dist /var/www/phpstan.neon.dist
+COPY ./.php-cs-fixer.dist.php /var/www/.php-cs-fixer.dist.php
+COPY ./phpstan.neon.dist /var/www/phpstan.neon.dist
 #COPY ./phpunit.xml /var/www/phpunit.xml
-#COPY ./psalm.xml /var/www/psalm.xml
+COPY ./psalm.xml /var/www/psalm.xml
 COPY ./tests /var/www/tests
 COPY ./docker/php/xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 

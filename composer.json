@@ -9,12 +9,17 @@
         "ext-iconv": "*",
         "symfony/console": "8.0.*",
         "symfony/dotenv": "8.0.*",
-        "symfony/flex": "^2",
+        "symfony/flex": "^2.10",
         "symfony/framework-bundle": "8.0.*",
         "symfony/runtime": "8.0.*",
         "symfony/yaml": "8.0.*"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.92.5",
+        "phpstan/phpstan": "^2.1.36",
+        "phpstan/phpstan-symfony": "^2.0.11",
+        "vimeo/psalm": "^6.14.3",
+        "phpstan/phpstan-strict-rules": "^2.0.7"
     },
     "config": {
         "allow-plugins": {

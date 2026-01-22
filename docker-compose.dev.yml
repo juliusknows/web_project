@@ -4,7 +4,7 @@ services:
             context: .
             dockerfile: docker/Dockerfile
             target: dev
-        container_name: app-symfony
+        container_name: app
         volumes: &volumes
             - public-volume:/var/www/public
 #            - ./var/log:/var/www/var/log
@@ -20,12 +20,13 @@ services:
             - ./bin:/var/www/bin
             - ./src:/var/www/src
             - ./tests:/var/www/tests
-#            - ./.php-cs-fixer.dist.php:/var/www/.php-cs-fixer.dist.php
-#            - ./phpstan.neon.dist:/var/www/phpstan.neon.dist
+            - ./.php-cs-fixer.dist.php:/var/www/.php-cs-fixer.dist.php
+            - ./phpstan.neon.dist:/var/www/phpstan.neon.dist
 #            - ./phpunit.xml:/var/www/phpunit.xml
-#            - ./psalm.xml:/var/www/psalm.xml
+            - ./psalm.xml:/var/www/psalm.xml
             - ./templates:/var/www/templates
             - ./migrations:/var/www/migrations
+            - ./docker/phpstan:/var/www/docker/phpstan
         networks:
             - dev-network
 
