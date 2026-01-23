@@ -1,0 +1,3 @@
+includes:
+    - ./phpstan.symfony.neon
+    - %rootDir%/../phpstan-doctrine/extension.neon
