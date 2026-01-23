@@ -7,5 +7,10 @@
 # To list all registered routes, run the following command:
 #   bin/console debug:router
 
-controllers:
-    resource: routing.controllers
+#controllers:
+#    resource: routing.controllers
+
+Main:
+    path: /
+    methods: GET|POST
+    controller: App\Controller\MainController::index
