@@ -27,6 +27,7 @@ services:
             - ./templates:/var/www/templates
             - ./migrations:/var/www/migrations
             - ./docker/phpstan:/var/www/docker/phpstan
+            - ./docker/psalm:/var/www/docker/psalm
         networks:
             - dev-network
 
