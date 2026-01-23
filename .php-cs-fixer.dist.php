@@ -2,8 +2,16 @@
 
 declare(strict_types=1);
 
+use PhpCsFixer\Finder;
+
+$finder = Finder::create()
+    ->in(__DIR__ . '/src')
+    ->name('*.php');
+
+
 return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
+    ->setFinder($finder)
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,

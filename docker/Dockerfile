@@ -46,8 +46,7 @@ COPY ./src/ /var/www/src/
 
 
 RUN composer install --prefer-dist --no-scripts --no-dev --optimize-autoloader --classmap-authoritative && \
-    chmod +x /var/www/bin/entrypoint.sh && \
-    rm -rf /var/www/html
+    chmod +x /var/www/bin/entrypoint.sh
 
 #------- END BASE -------
 
@@ -85,6 +84,7 @@ COPY ./docker/php/xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 FROM base AS prod
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
+#загружает карту классов для разгрузки автолоадеров.
 ENV PHP_OPCACHE_PRELOAD="/var/www/config/preload.php"
 ENV APP_ENV=prod
 
