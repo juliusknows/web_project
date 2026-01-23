@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugins xmlns="https://getpsalm.org/schema/config" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="platform_plugin.xml" xpointer="xmlns(ps=https://getpsalm.org/schema/config)xpointer(/ps:plugins/*)" />
+</plugins>

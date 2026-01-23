@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugins xmlns="https://getpsalm.org/schema/config">
+    <pluginClass class="PLT\Psalm\Plugin\Plugin"></pluginClass>
+</plugins>
