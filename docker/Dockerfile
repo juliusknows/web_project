@@ -66,8 +66,7 @@ ENV APP_ENV=dev
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"  && \
-    echo 'user = root' >> $PHP_INI_DIR/../php-fpm.d/www.conf  && \
+RUN echo 'user = root' >> $PHP_INI_DIR/../php-fpm.d/www.conf  && \
     echo 'group = root' >> $PHP_INI_DIR/../php-fpm.d/www.conf && \
     composer install --prefer-dist --no-scripts --optimize-autoloader
 
