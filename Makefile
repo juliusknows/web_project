@@ -27,6 +27,9 @@ clean: ## Удалить кэш
 in-app: ## Войти в контейнер с приложением
 	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_CONFIG) exec app bash
 
+in-nginx: ## Войти в контейнер nginx
+	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_CONFIG) exec nginx sh
+
 phpstan: ## Статический анализ кода - phpstan
 	$(DOCKER_COMPOSE) $(DOCKER_COMPOSE_CONFIG) exec -T app composer phpstan
 
